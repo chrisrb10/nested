@@ -100,15 +100,19 @@ def pred_to_df(pred_array, columns):
 
 def probs_to_df(pred_df, num_labels=3):
     '''
-    text
+    Extract the top 'num_labels' (3) probabilities for each image
+    takes pred_df data .values to convert into a np.array
+    calls np.sort on this array, and takes the num_labels (3) largest
+    values in each row ([:,-(num_labels):])
+    puts the result into a new df (probs_df), note column labelling is in reverse
+    probability order (np.sort returns in ascending order)
+    re-orders df columns to the more rational order (1,2,3)
+
+    returns
+    a df with top num_labels names and associated proabiliies for each
+    image in pred_df
     '''
 
-    # Extract the top 3 probabilities for each image
-    # takes pred_df data .values to convert into a np.array
-    # calls np.sort on this array, and takes the 3 largest values in each row ([:,-3:])
-    # puts the result into a new df (probs_df), note column labelling is in reverse
-    # probability order (np.sort returns in ascending order)
-    # re-orders df columns to the more rational order (1,2,3)
 
     # creates column labels for label probs - sort into reverse order
     columns = []
@@ -127,20 +131,23 @@ def probs_to_df(pred_df, num_labels=3):
 
 def labels_to_df(pred_df, num_labels=3):
     '''
-    text
+    Extracts the labels corresponding to the top num_labels(3) probabilities in
+    probs_df.
+    Calls np.argsort on same pred_df data (as np.array) as probs_df extraction.
+    Argsort returns indices of 3 largest values in each row
+    Iterate through each row, and use the indices to extract the corresponding
+    column label from the list of pred_df column names (pred_df.columns)
+    Creates a dictionary (e.g. {'label1':'bathroom', 'label2':'kitchen, etc)
+    for each row, and appends to a list
+    Thes converts list of dictionaries (all with matching keys) to a df
+
+    (NOTE this could have been done using df.append - but that is substantially
+    slower, as pd.concat (and therefore pd.append) make a
+    full copy of he data each time)
+
+    returns
+    a dataframe of the top 3 labels (in order) for each image
     '''
-    # Extracts the labels corresponding to the top 3 probabilities in probs_df
-    # calls np.argsort on same pred_df data (as np.array) as probs_df extraction
-    # argsort returns indices of 3 largest values in each row
-    # iterate through each row, and use the indices to extract the corresponding
-    # column label from the list of pred_df column names (pred_df.columns)
-    # creates a dictionary (e.g. {'label1':'bathroom', 'label2':'kitchen, etc)
-    # for each row, and appends to a list
-    # The converts list of dictionaries (all with matching keys) to a df
-    #
-    # (NOTE this could have been done using df.append - but that is substantially
-    # slower, as pd.concat (and therefore pd.append) make a
-    # full copy of he data each time)
 
 
     label_idx = np.argsort(pred_df.values)[:,-(num_labels):]
@@ -164,7 +171,8 @@ def labels_to_df(pred_df, num_labels=3):
 
 def combine_labels_probs_df(labels_df, probs_df):
     '''
-    text
+    Combine the labels_df and probs_df dataframes to give
+    a single df with top 3 labels and associated probabilities
     '''
     return pd.concat([labels_df, probs_df], axis=1)
 
@@ -172,7 +180,12 @@ def combine_labels_probs_df(labels_df, probs_df):
 
 def get_labels_and_probs(pred_df, num_labels=3):
     '''
-    text
+    Sequentially runs the 3 functions to extract top n (num_labels)
+    labels and associated probabilities from prediction data and combine
+    into a single df
+
+    returns
+    dataframe with top n labels and top n probabilities
     '''
 
     probs_df = probs_to_df(pred_df, num_labels=num_labels)
