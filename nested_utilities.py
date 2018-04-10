@@ -207,6 +207,176 @@ def build_catalogue(path):
     return data_cat
 
 
+
+def create_test_dirs(source, destination):
+    """
+    Creates directories for test data
+    Sub-directory structure (classes) in source is replicated
+    in test directory
+
+    args:
+    source - path to data source directory (str)
+    destination - path to destination directory (str)
+    """
+    # defines train and validation directory names & paths
+    test_dir = 'test_data'
+    test_path = os.path.join(destination, test_dir)
+
+    # creates destination directory (if not exist)
+    if not os.path.exists(test_path):
+        os.mkdir(test_path)
+
+    # walks through source subdirectories, and creates copy
+    # in training and validation directories
+    for dirpath, dirs, files in os.walk(source):
+            for subdir in dirs:
+                newpath_test = os.path.join(test_path, subdir)
+                #print(newpath_test)
+                if not os.path.exists(newpath_test):
+                    os.mkdir(newpath_test)
+
+
+
+def data_model_test_split(source, destination, test_split=0.25, filetype='.jpg'):
+    """
+    Walks through files in directory, and randomly moves a proportion to
+    test set.
+    Moves file to relevant test dir as appropriate
+
+    args:
+    source - source directory path (str)
+    destination - destination directory path (str)
+    test_split - test proportion in range 0-1 (default=0.25)
+    """
+    # defines paths to destination test directories
+    test_path = destination
+
+    # setsup file counters
+    file_count_m = 0
+    file_count_test = 0
+    file_count_model = 0
+
+    #loops through files in source
+    for dirpath, dirs, files in os.walk(source):
+            for file_ in files:
+                # decodes filename, and checks if it is desired type
+                filename = os.fsdecode(file_)
+                if filename.endswith(filetype):
+                    file_count_m += 1
+                    # creates path for file as 'source'
+                    filepath_source = os.path.join(dirpath, file_)
+                    subdir = dirpath.split('/')[-1:][0]   # collects subdir(class) name as str
+                    # randomly allocates to test or model set based on random number
+                    if np.random.rand(1) <= test_split:
+                        # test sample - defines path for file as destination, and moves file
+                        file_count_test += 1
+                        filepath_dest = os.path.join(test_path, subdir, file_)
+                        #print(filepath_dest)
+                        shutil.move(filepath_source, filepath_dest)
+                    else:
+                        # training sample - does nothing
+                        file_count_model += 1
+
+
+    print('{} files found: {} allocated to test and {} to modelling'
+            .format(file_count_m, file_count_test, file_count_model))
+
+
+
+def create_train_and_val_dirs(source, destination):
+    """
+    Creates training and validation directories for train/val split files
+    Sub-directory structure (classes) in source is replicated
+    in both training and validation directories
+
+    args:
+    source - path to data source directory (str)
+    destination - path to destination directory (str)
+    """
+    # defines train and validation directory names & paths
+    train_dir = 'training_dir'
+    val_dir = 'validation_dir'
+    train_path = os.path.join(destination, train_dir)
+    val_path = os.path.join(destination, val_dir)
+
+    # creates destination directory (if not exist)
+    if not os.path.exists(destination):
+        os.mkdir(destination)
+
+    # creates training and validation directories (if not exist)
+    if not os.path.exists(train_path):
+        os.mkdir(train_path)
+    if not os.path.exists(val_path):
+        os.mkdir(val_path)
+
+    # walks through source subdirectories, and creates copy
+    # in training and validation directories
+    for dirpath, dirs, files in os.walk(source):
+            for subdir in dirs:
+                newpath_t = os.path.join(train_path, subdir)
+                newpath_v = os.path.join(val_path, subdir)
+                if not os.path.exists(newpath_t):
+                    os.mkdir(newpath_t)
+                if not os.path.exists(newpath_v):
+                    os.mkdir(newpath_v)
+
+
+def data_train_val_split(source, destination, train_dir='training_dir',
+                         val_dir = 'validation_dir',
+                         filetype='.jpg', val_split=0.3):
+    """
+    Walks through files in directory, and randomly assigns & copies to
+    training or validation set.
+    Copies file to destination /train or /val as appropriate
+
+    args:
+    source - source directory path (str)
+    destination - destination directory path (str)
+    train_dir - training directory name in destination (default='training_dir')
+    val_dir - val directory name in destination (default='training_dir')
+    filetype - file extension of filetypes to consider (default='.jpg')
+    val_split - validation proportion in range 0-1 (default=0.3)
+    """
+    # defines paths to destination train and val directories
+    dest_train_path = os.path.join(destination, train_dir)
+    dest_val_path = os.path.join(destination, val_dir)
+    # setsup file counters
+    file_count_m = 0
+    file_count_t = 0
+    file_count_v = 0
+
+    #loops through files in source
+    for dirpath, dirs, files in os.walk(source):
+            for file_ in files:
+                # decodes filename, and checks if it is desired type
+                filename = os.fsdecode(file_)
+                if filename.endswith(filetype):
+                    file_count_m += 1
+                    # creates path for file as 'source'
+                    filepath_source = os.path.join(dirpath, file_)
+                    subdir = dirpath.split('/')[-1:][0]
+                    # collects subdir(class) name as str
+                    # randomly allocates to train or val based on val_split proportion
+                    if np.random.rand(1) < val_split:
+                        # validation sample - defines path for file as destination, and copies file
+                        file_count_v += 1
+                        filepath_dest = os.path.join(dest_val_path, subdir, file_)
+                        shutil.move(filepath_source, filepath_dest)
+                    else:
+                        # training sample - defines path for file as destination, and copies file
+                        file_count_t += 1
+                        filepath_dest = os.path.join(dest_train_path, subdir, file_)
+                        #print('\nTraining sample: {}\nTarget path: {}'.format(filepath_source, filepath_dest))
+                        shutil.move(filepath_source, filepath_dest)
+
+    print('{} files copied: {} training and {} validation'
+            .format(file_count_m, file_count_t, file_count_v))
+
+
+
+
+
+
 ##############################################
 # IMAGE PROCESSING AND PLOTTING #
 ##############################################
