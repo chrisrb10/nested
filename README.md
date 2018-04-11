@@ -48,7 +48,7 @@ Contained various catalogues (pandas dataframes saved as `.csv`) from processing
 **`./image_grids/`**   
 contains a range of different composite image grids prepared during data processing and prediction evalation   
 
-**`./plots`**    
+**`./plots/`**    
 Contains plots related to analysis & evaluation   
 
 **`./presentations/`**   
