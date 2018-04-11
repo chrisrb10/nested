@@ -1,6 +1,6 @@
 ################################
-# A collection of utility functions for nested room id project
-# IMAGE PROCESSING AND PLOTTING
+# A collection of plotting functions for nested room id project
+# Plotting & Image grids
 ################################
 
 #############################################
@@ -43,7 +43,7 @@ def timestamp():
 
 
 ##############################################
-# IMAGE PROCESSING AND PLOTTING #
+# Image reading
 ##############################################
 
 def read_img(img, size=(299,299)):
@@ -60,11 +60,16 @@ def read_img(img, size=(299,299)):
 
 
 
+########################
+# Image grid plotting and labelling functions
+########################
+
+
 def image_grid(data, image_path, image_size='m', figsize=(22,11),
                annotate=False, save=True, fill_grid=True,
                f_stem='image_grid_', fig_title='Figure Title',
                label_fn=None, label_info=None,
-               output_dir='working_data/comp_images/'):
+               output_dir='image_grids/'):
     '''
     Image grid function.
     Takes information from a pandas df (inclunding image path and label
@@ -92,7 +97,7 @@ def image_grid(data, image_path, image_size='m', figsize=(22,11),
     label_fn - fn - labelling function to call on images in grid
     label_info - dict -  dict of params as required by relevant label function
 
-    output_dir - str - (default = 'working_data/comp_images/') - path to
+    output_dir - str - (default = 'image_grids/') - path to
         directory for saving output
 
     TO DO:
@@ -181,6 +186,8 @@ def image_grid(data, image_path, image_size='m', figsize=(22,11),
 
 def label_before_after(ax, row, label_info, label_size):
     '''
+    LABELLING FUNCTION FOR image_grid
+
     Annotate images with original and reclassified image labels
     For use with image_grid function
 
@@ -216,6 +223,8 @@ def label_before_after(ax, row, label_info, label_size):
 
 def label_probs(ax, row, label_info, label_size):
     '''
+    LABELLING FUNCTION FOR image_grid
+
     Annotate images with predicted image labels and probabilities
     on bars scaled to probability
     For use with image_grid function
@@ -271,6 +280,11 @@ def label_probs(ax, row, label_info, label_size):
                 fontsize=label_size, backgroundcolor='gray', alpha=0.8)
 
 
+
+######################
+# Confusion Matrix plotting
+#####################
+
 def normalise_cm(cm):
     '''
     Normalises a confusion matrix
@@ -280,11 +294,14 @@ def normalise_cm(cm):
 
 
 def plot_confusion_matrix(conf_mat, labels, fig, ax,
-                          annot=True, fontsize=16,
+                          annot=True, fontsize=14,
                           normalise=True):
     '''
     plots confusion matrix heatmap
-    need to add: titling, axis & tick fontsize
+
+
+    TO DO:
+    add in functionality for titling, fontsize kwarg input
     '''
 
     if normalise:
