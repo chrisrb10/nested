@@ -42,16 +42,16 @@ Evaluates the model labelling of the test data
 
 ## Other directories / files
 
-**`/data_catalogues/`**  
+**`./data_catalogues/`**  
 Contained various catalogues (pandas dataframes saved as `.csv`) from processing, relassifying and test_data predictions.
 
-**`/image_grids/`**   
+**`./image_grids/`**   
 contains a range of different composite image grids prepared during data processing and prediction evalation   
 
-**`/plots`**    
+**`./plots`**    
 Contains plots related to analysis & evaluation   
 
-**`/presentations/`**   
+**`./presentations/`**   
 Contains presentations and presentation material relating to the project
 
 
